@@ -21,7 +21,7 @@ def help_me():
     print("[-w or --warped]:    Warped image output [default: warped_ecc.jpg]")
     print("image_file:          Provide input image (to be warped/aligned)")
     print("template_file:       Provide template image for alignment")
-    print("warp_file:           Provide input file containing warp matrix")
+    print("warp_file:           Provide input file containing warp matrix [optional]")
 
 
 def main():
@@ -67,16 +67,19 @@ def main():
         else:
             assert False, "Unhandled Option!"
 
-    if len(args) is 3:
+    if len(args) < 2:
+        print("Too few input files!")
+        help_me()
+        sys.exit(1)
+    elif len(args) is 2:
+        image_file = args[0]
+        template_file = args[1]
+    elif len(args) is 3:
         image_file = args[0]
         template_file = args[1]
         warp_file = args[2]
-    if len(args) > 3:
+    elif len(args) > 3:
         print("Too many input files!")
-        help_me()
-        sys.exit(1)
-    if len(args) < 3:
-        print("Too few input files!")
         help_me()
         sys.exit(1)
 
