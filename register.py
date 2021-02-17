@@ -5,15 +5,16 @@ Class:      CS6420
 Desc:       Demonstration of manual or automatic
             registration on an image
 """
-
 import cv2 as cv
 import numpy as np
 import getopt
 import sys
+from find_image import find
+from histogram import equalize
 
 
 def help_me():
-    print("\n{:>10}{:->15}{}{:->15}".format("","-","HELP","-"))
+    print("\n{:>10}{:->15}{}{:->15}".format("", "-", "HELP", "-"))
     print("[-M or --manual]:    Perform manual registration by picking your location points")
     print("[-e or --epsilon]:   ECC's convergence epsilon [default: 0.0001]")
     print("[-m or --motion]:    Type of motion (translation:0/Euclidean:1/affine:2/homograpy:3) [default: affine:2]")
@@ -32,6 +33,7 @@ def main():
         print(err)
         sys.exit(1)
 
+    path = "C:\Users\codyh\Desktop\School"
     manual = False
     epsilon = 0.0001
     motion = 2
@@ -74,14 +76,18 @@ def main():
     elif len(args) is 2:
         image_file = args[0]
         template_file = args[1]
+        image, template = find(image_file, path), find(template_file, path)
     elif len(args) is 3:
         image_file = args[0]
         template_file = args[1]
         warp_file = args[2]
+        image, template, warp = find(image_file, path), find(template_file, path), find(warp_file, path)
     elif len(args) > 3:
         print("Too many input files!")
         help_me()
         sys.exit(1)
+
+    input_img, template_img = equalize(image, template)
 
 
 if __name__ == "__main__":
