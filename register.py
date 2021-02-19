@@ -11,13 +11,14 @@ import getopt
 import sys
 from find_image import find
 from histogram import equalize
+from transform import grab_points, register_image
 
 
 def help_me():
     print("\n{:>10}{:->15}{}{:->15}".format("", "-", "HELP", "-"))
     print("[-M or --manual]:    Perform manual registration by picking your location points")
     print("[-e or --epsilon]:   ECC's convergence epsilon [default: 0.0001]")
-    print("[-m or --motion]:    Type of motion (translation:0/Euclidean:1/affine:2/homograpy:3) [default: affine:2]")
+    print("[-m or --motion]:    Type of motion (translation/Euclidean/affine/homograpy) [default: affine:]")
     print("[-o or --output]:    Output warp matrix filename [default: out_warp.ecc]")
     print("[-w or --warped]:    Warped image output [default: warped_ecc.jpg]")
     print("image_file:          Provide input image (to be warped/aligned)")
@@ -33,7 +34,7 @@ def main():
         print(err)
         sys.exit(1)
 
-    path = "C:\Users\codyh\Desktop\School"
+    path = "C:\\Users\\codyh\\Desktop\\School\\Grad School\\Spring 2021\\6420"
     manual = False
     epsilon = 0.0001
     motion = 2
@@ -56,10 +57,10 @@ def main():
             if epsilon < 0.0001:
                 epsilon = 0.0001
         elif o in ("-m", "--motion"):
-            motion = int(a)
-            motions = [0, 1, 2, 3]
+            motion = a.upper()
+            motions = ["TRANSLATION", "EUCLIDEAN", "AFFINE", "HOMOGRAPHY"]
             if motion not in motions:
-                print("Input entered is not a valid option")
+                print(f"Input '{motion.lower()}' is not a valid option")
                 help_me()
                 sys.exit(1)
         elif o in ("-o", "--output"):
@@ -87,7 +88,16 @@ def main():
         help_me()
         sys.exit(1)
 
-    input_img, template_img = equalize(image, template)
+    color_img, input_img, template_img = equalize(image, template)
+
+    if manual is True:
+        size = grab_points(input_img, motion, output, path)
+        register_image(color_img, template_img, motion, manual, output, warp_file, warped, path, epsilon, size)
+    else:
+        register_image(color_img, template_img, motion, manual, output, warp_file, warped, path, epsilon, None)
+
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
 
 if __name__ == "__main__":
