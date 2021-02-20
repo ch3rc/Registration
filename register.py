@@ -91,10 +91,10 @@ def main():
     color_img, input_img, template_img = equalize(image, template)
 
     if manual is True:
-        size = grab_points(input_img, motion, output, path)
-        register_image(color_img, template_img, motion, manual, output, warp_file, warped, path, epsilon, size)
+        grab_points(input_img, template_img, motion, output, path)
+        register_image(color_img, template_img, motion, manual, output, warp_file, warped, path, epsilon)
     else:
-        register_image(color_img, template_img, motion, manual, output, warp_file, warped, path, epsilon, None)
+        register_image(color_img, template_img, motion, manual, output, warp_file, warped, path, epsilon)
 
     cv.waitKey(0)
     cv.destroyAllWindows()
